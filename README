@@ -1,0 +1,18 @@
+
+Throttle arbituary operation. Once limit is reached it will raise a Throttle::LimitExeeded exception. 
+
+Example: 
+
+  Throttle.for("feed:#{request.remote_ip}", :max => 20, :in => 10.minutes) do
+    render :xml => Articles.all
+  end
+
+  If you want to clear the timeout for the current block ( for example: fraud protection. Clear the throttle when 
+  the submitted Credit Card was valid. ) your block can accept a yielded throttle object and call the clear method
+
+  Throttle.for("cc:#{request.remote_ip}", :max => 20, :in => 10.minutes) do |throttle|
+    if am.pay(@credit_card)        
+      throttle.clear
+      redirect_to :action => 'done'
+    end
+  end
